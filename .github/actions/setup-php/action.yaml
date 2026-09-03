@@ -25,7 +25,7 @@ runs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ inputs['php-version'] }}
-        extensions: mbstring, json, sqlite, bcmath, ${{ inputs['extensions'] }}
+        extensions: mbstring, json, sqlite3, pdo_sqlite, bcmath, ${{ inputs['extensions'] }}
         coverage: ${{ inputs['coverage'] }}
         tools: composer:2
 

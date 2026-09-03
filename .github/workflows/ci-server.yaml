@@ -5,8 +5,11 @@ on:
     branches: [main]
     paths:
       - "apps/server/**"
-      - ".github/workflows/ci-server.yml"
       - ".github/actions/setup-php/**"
+      - ".github/workflows/ci-server.yaml"
+
+permissions:
+  contents: read
 
 jobs:
   tests:
