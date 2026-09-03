@@ -1,0 +1,41 @@
+name: Run Server CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/server/**"
+      - ".github/workflows/ci-server.yml"
+      - ".github/actions/setup-php/**"
+
+jobs:
+  tests:
+    name: Run Server Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/server
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy .env.testing
+        run: test -f .env.testing || cp .env.example .env.testing
+
+      - name: Set up PHP
+        uses: ./.github/actions/setup-php
+        with:
+          working-directory: ./apps/server
+          extensions: xml, dom
+
+      - name: Generate key
+        run: php artisan key:generate --env=testing
+
+      - name: Run unit tests
+        run: composer test:unit
+
+      - name: Run static analysis
+        run: composer test:types
+
+      - name: Run code style check
+        run: composer test:lint
