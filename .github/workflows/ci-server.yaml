@@ -17,7 +17,7 @@ jobs:
         working-directory: ./apps/server
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Copy .env.testing
         run: test -f .env.testing || cp .env.example .env.testing

@@ -30,7 +30,7 @@ runs:
         tools: composer:2
 
     - name: Cache Composer dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ inputs['working-directory'] }}/vendor
         key: composer-${{ inputs['php-version'] }}-${{ hashFiles(format('{0}/composer.lock', inputs['working-directory'])) }}
