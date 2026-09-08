@@ -99,11 +99,21 @@ function testFormRequestValidations(
  * @param  string  $route  The route name.
  * @param  ?Closure  $routeParameters  A closure that returns an array of parameters for the route.
  */
-function testPaginationParameters(string $route, ?Closure $routeParameters = null, int $minPerPage = 15, int $maxPerPage = 50): void
-{
-    testFormRequestValidations('GET', $route, [
+function testPaginationParameters(
+    string $route,
+    ?Closure $routeParameters = null,
+    int $minPerPage = 15,
+    int $maxPerPage = 50,
+    bool $hasSort = true
+): void {
+    $dataset = [
         'page' => fn () => getPaginationPageDataset(),
         'perPage' => fn () => getPaginationPerPageDataset($minPerPage, $maxPerPage),
-        'sortOrder' => fn () => getPaginationSortOrderDataset(),
-    ], $routeParameters);
+    ];
+
+    if ($hasSort) {
+        $dataset['sortOrder'] = fn () => getPaginationSortOrderDataset();
+    }
+
+    testFormRequestValidations('GET', $route, $dataset, $routeParameters);
 }

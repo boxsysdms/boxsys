@@ -5,7 +5,11 @@ info:
 
 http:
   method: GET
-  url: "{{SERVER_URL}}/permissions"
+  url: "{{SERVER_URL}}/permissions?scope=system"
+  params:
+    - name: scope
+      value: system
+      type: query
   auth: inherit
 
 settings:

@@ -6,5 +6,5 @@ namespace App\Enums;
 
 enum Permission: string
 {
-    //
+    // To be implemented
 }

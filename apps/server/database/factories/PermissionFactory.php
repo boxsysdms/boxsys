@@ -22,12 +22,34 @@ final class PermissionFactory extends Factory
     {
         return [
             'name' => fake()->unique()->words(3, true),
-            'scope' => fake()->randomElement([PermissionScope::COLLECTION, PermissionScope::SYSTEM]),
+            'scope' => fake()->randomElement(
+                array_column(PermissionScope::cases(), 'value')
+            ),
             'description' => [
-                'en' => fake('en')->sentence(),
-                'pt' => fake('pt_PT')->sentence(),
+                'en' => fake()->sentence(),
+                'pt' => fake()->sentence(),
             ],
             'guard_name' => 'web',
         ];
+    }
+
+    /**
+     * Set the permission scope to SYSTEM.
+     */
+    public function system(): self
+    {
+        return $this->state(fn (array $attributes) => [
+            'scope' => PermissionScope::SYSTEM,
+        ]);
+    }
+
+    /**
+     * Set the permission scope to COLLECTION.
+     */
+    public function collection(): self
+    {
+        return $this->state(fn (array $attributes) => [
+            'scope' => PermissionScope::COLLECTION,
+        ]);
     }
 }

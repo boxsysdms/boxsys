@@ -29,8 +29,6 @@ final class ListPermissionsRequest extends FormRequest
             'scope' => ['required', 'string', new Enum(\App\Enums\PermissionScope::class)],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:15', 'max:100'],
-            'sortBy' => ['nullable', 'string', 'in:name'],
-            'sortOrder' => ['nullable', 'string', 'in:asc,desc'],
         ];
     }
 }
