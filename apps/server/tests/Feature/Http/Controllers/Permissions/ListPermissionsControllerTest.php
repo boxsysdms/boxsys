@@ -70,7 +70,7 @@ describe('GET /permissions', function () {
         ]);
 
         $response = actingAs(test()->user)
-            ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM, 'sort' => 'name']));
+            ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM, 'sortBy' => 'name']));
 
         expect($response->json('data.0.id'))->toBe('collections.manage')
             ->and($response->json('data.1.id'))->toBe('groups.add')

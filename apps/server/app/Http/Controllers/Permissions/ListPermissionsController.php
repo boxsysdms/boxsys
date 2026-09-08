@@ -9,7 +9,6 @@ use App\Data\Permissions\ListPermissionsData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Permissions\ListPermissionsRequest;
 use App\Http\Resources\Permissions\PermissionResource;
-use Illuminate\Http\Request;
 
 final class ListPermissionsController extends Controller
 {

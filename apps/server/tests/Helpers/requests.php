@@ -6,7 +6,6 @@ namespace Tests\Helpers;
 
 use App\Models\User;
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 
 use function Pest\Laravel\actingAs;
