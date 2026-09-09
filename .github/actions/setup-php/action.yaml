@@ -1,0 +1,42 @@
+name: Setup PHP
+description: A GitHub Action to set up a PHP environment for testing.
+
+inputs:
+  working-directory:
+    description: "The working directory for the PHP environment."
+    required: true
+  php-version:
+    description: "The version of PHP to set up (e.g., 8.5)."
+    required: false
+    default: "8.5"
+  extensions:
+    description: "Comma-separated list of additional optional PHP extensions to install beyond the default set (e.g., redis, intl)"
+    required: false
+    default: ""
+  coverage:
+    description: "Enable code coverage with xdebug."
+    required: false
+    default: "xdebug"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs['php-version'] }}
+        extensions: mbstring, json, sqlite3, pdo_sqlite, bcmath, ${{ inputs['extensions'] }}
+        coverage: ${{ inputs['coverage'] }}
+        tools: composer:2
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v6
+      with:
+        path: ${{ inputs['working-directory'] }}/vendor
+        key: composer-${{ inputs['php-version'] }}-${{ hashFiles(format('{0}/composer.lock', inputs['working-directory'])) }}
+        restore-keys: composer-${{ inputs['php-version'] }}-
+
+    - name: Install Composer dependencies
+      shell: bash
+      run: composer install --prefer-dist --no-progress --no-interaction
+      working-directory: ${{ inputs['working-directory'] }}

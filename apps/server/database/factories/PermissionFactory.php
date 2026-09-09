@@ -38,7 +38,7 @@ final class PermissionFactory extends Factory
      */
     public function system(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'scope' => PermissionScope::SYSTEM,
         ]);
     }
@@ -48,7 +48,7 @@ final class PermissionFactory extends Factory
      */
     public function collection(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'scope' => PermissionScope::COLLECTION,
         ]);
     }
