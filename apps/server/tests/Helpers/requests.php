@@ -74,7 +74,7 @@ function testFormRequestValidations(
                 $parameters = is_array($value) && count($value) > 1 ? $value : [$field => $value];
 
                 // Evaluate any closures in the parameters to get their actual values.
-                $parameters = array_map(fn($value) => $value instanceof Closure ? $value() : $value, $parameters);
+                $parameters = array_map(fn ($value) => $value instanceof Closure ? $value() : $value, $parameters);
 
                 // In GET requests, parameters are sent as query parameters. In
                 // other requests, they are sent as JSON body, but we still need
@@ -107,12 +107,12 @@ function testPaginationParameters(
     bool $hasSort = true
 ): void {
     $dataset = [
-        'page' => fn() => getPaginationPageDataset(),
-        'perPage' => fn() => getPaginationPerPageDataset($minPerPage, $maxPerPage),
+        'page' => fn () => getPaginationPageDataset(),
+        'perPage' => fn () => getPaginationPerPageDataset($minPerPage, $maxPerPage),
     ];
 
     if ($hasSort) {
-        $dataset['sortOrder'] = fn() => getPaginationSortOrderDataset();
+        $dataset['sortOrder'] = fn () => getPaginationSortOrderDataset();
     }
 
     testFormRequestValidations('GET', $route, $dataset, $routeParameters);
