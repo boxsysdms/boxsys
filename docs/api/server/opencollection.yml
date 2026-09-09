@@ -22,7 +22,7 @@ request:
       value: application/json
   auth:
     type: bearer
-    token: 1|jkPk8oYWfyvRPMadxjdcDhiWByls7oyf5JEEvHj3f46523a2
+    token: "{{process.env.SERVER_API_TOKEN}}"
 bundled: false
 extensions:
   bruno:

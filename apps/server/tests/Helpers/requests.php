@@ -49,7 +49,7 @@ function testAuthenticationAndAuthorization(string $method, string $route, ?Clos
  *
  * @param  string  $method  The HTTP method (GET, POST, PUT, PATCH, DELETE).
  * @param  string  $route  The route name.
- * @param  array<string, string>  $fieldsWithDatasets  An associative array where keys are field names and values are dataset names.
+ * @param  array<string, string|Closure>  $fieldsWithDatasets  An associative array where keys are field names and values are dataset names.
  * @param  ?Closure  $routeParameters  A closure that returns an array of parameters for the route.
  */
 function testFormRequestValidations(

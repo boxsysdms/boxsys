@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Permission;
 use Spatie\Permission\DefaultTeamResolver;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 return [

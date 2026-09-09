@@ -15,7 +15,7 @@ use Spatie\Translatable\HasTranslations;
 /**
  * @property-read int $id
  * @property-read string $name
- * @property-read string $scope
+ * @property-read PermissionScope $scope
  * @property-read string|null $description
  * @property-read string $guard_name
  */
