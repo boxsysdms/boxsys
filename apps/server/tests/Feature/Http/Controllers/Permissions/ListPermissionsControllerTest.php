@@ -25,60 +25,61 @@ describe('GET /permissions', function () {
     testAuthenticationAndAuthorization('GET', 'permissions.index', withAuthorization: false);
 
     it('returns only permissions matching the requested scope', function () {
-        Permission::factory()
-            ->count(5)
-            ->sequence(
-                ['scope' => PermissionScope::SYSTEM],
-                ['scope' => PermissionScope::COLLECTION],
-                ['scope' => PermissionScope::SYSTEM],
-                ['scope' => PermissionScope::SYSTEM],
-                ['scope' => PermissionScope::COLLECTION],
-            )
-            ->create();
+        Permission::factory(3)->system()->create();
+        Permission::factory(2)->collection()->create();
 
         $response = actingAs(test()->user)
             ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM]));
 
-        expect($response)->status()->toBe(Response::HTTP_OK);
+        expect($response)
+            ->status()->toBe(Response::HTTP_OK)
+            ->headers->get('Content-Type')->toBe('application/json');
 
         expect($response->json('data'))->toHaveCount(3);
     });
 
-    it('includes links and meta information', function () {
-        Permission::factory()->count(5)->create();
-
-        $response = actingAs(test()->user)
-            ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM]));
-
-        expect($response->json())->toHaveKeys(['links', 'meta']);
-    });
-
-    it('returns an empty list when there are no permissions', function () {
+    it('returns an empty list when there are no permissions matching the requested scope', function () {
         $response = actingAs(test()->user)
             ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM]));
 
         expect($response)->status()->toBe(Response::HTTP_OK);
 
         expect($response->json('data'))->toHaveCount(0);
-    });
+    })->depends('it returns only permissions matching the requested scope');
 
-    it('sorts permissions by name', function () {
-        Permission::factory()->createMany([
-            ['name' => 'users.create', 'scope' => PermissionScope::SYSTEM],
-            ['name' => 'groups.add', 'scope' => PermissionScope::SYSTEM],
-            ['name' => 'collections.manage', 'scope' => PermissionScope::SYSTEM],
-        ]);
+    it('returns permissions with the expected structure', function () {
+        Permission::factory()->system()->create();
 
         $response = actingAs(test()->user)
-            ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM, 'sortBy' => 'name']));
+            ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM]));
 
-        expect($response->json('data.0.id'))->toBe('collections.manage')
-            ->and($response->json('data.1.id'))->toBe('groups.add')
-            ->and($response->json('data.2.id'))->toBe('users.create');
-    });
+        expect($response->json())->toHaveKeys(['data', 'meta', 'links']);
 
-    it('paginates permissions', function () {
-        Permission::factory()->count(50)->create(['scope' => PermissionScope::SYSTEM]);
+        expect($response->json('data.0'))
+            ->toHaveKeys(['name', 'description'])
+            ->not->toHaveKeys(['id', 'scope']);
+    })->depends('it returns only permissions matching the requested scope');
+
+    it('returns permissions sorted by name ascending', function () {
+        Permission::factory(3)
+            ->system()
+            ->sequence(
+                ['name' => 'users.create'],
+                ['name' => 'groups.add'],
+                ['name' => 'collections.manage'],
+            )
+            ->create();
+
+        $response = actingAs(test()->user)
+            ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM]));
+
+        expect($response->json('data.0.name'))->toBe('collections.manage')
+            ->and($response->json('data.1.name'))->toBe('groups.add')
+            ->and($response->json('data.2.name'))->toBe('users.create');
+    })->depends('it returns only permissions matching the requested scope');
+
+    it('returns the requested page with the configured page size', function () {
+        Permission::factory(50)->system()->create();
 
         $response = actingAs(test()->user)
             ->getJson(route('permissions.index', [
@@ -91,34 +92,35 @@ describe('GET /permissions', function () {
             ->toHaveCount(20)
             ->and($response->json('meta.current_page'))->toBe(2)
             ->and($response->json('meta.per_page'))->toBe(20);
-    });
+    })->depends('it returns only permissions matching the requested scope');
 
-    it('returns localized descriptions', function () {
-        Permission::factory()->count(2)->createMany([
-            [
-                'name' => 'users.create',
-                'scope' => PermissionScope::SYSTEM,
-                'description' => ['en' => 'Create users', 'pt' => 'Criar utilizadores'],
-            ],
-            [
-                'name' => 'groups.users.add',
-                'scope' => PermissionScope::SYSTEM,
-                'description' => ['en' => 'Add users to groups', 'pt' => 'Adicionar utilizadores a grupos'],
-            ],
-        ]);
+    it('returns descriptions translated to the requested locale', function () {
+        Permission::factory(2)
+            ->system()
+            ->sequence(
+                [
+                    'name' => 'users.create',
+                    'description' => ['en' => 'Create users', 'pt' => 'Criar utilizadores'],
+                ],
+                [
+                    'name' => 'groups.users.add',
+                    'description' => ['en' => 'Add users to groups', 'pt' => 'Adicionar utilizadores a grupos'],
+                ],
+            )
+            ->create();
 
         $response = actingAs(test()->user)
             ->withHeaders(['Accept-Language' => 'pt'])
             ->getJson(route('permissions.index', ['scope' => PermissionScope::SYSTEM]));
 
-        $descriptions = $response->json('data.*.attributes.description');
+        $descriptions = $response->json('data.*.description');
 
         expect($descriptions)->toContain('Criar utilizadores', 'Adicionar utilizadores a grupos');
-    });
+    })->depends('it returns only permissions matching the requested scope');
 
     testFormRequestValidations('GET', 'permissions.index', [
         'scope' => 'scope filter values',
     ]);
 
-    testPaginationParameters('permissions.index', maxPerPage: 100);
+    testPaginationParameters('permissions.index', maxPerPage: 100, hasSort: false);
 });

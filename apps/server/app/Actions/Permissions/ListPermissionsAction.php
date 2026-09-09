@@ -16,7 +16,7 @@ final class ListPermissionsAction
     {
         return Permission::query()
             ->where('scope', $data->scope)
-            ->orderBy($data->sortBy, $data->sortOrder)
+            ->orderBy('name', 'asc')
             ->paginate(page: $data->page, perPage: $data->perPage);
     }
 }

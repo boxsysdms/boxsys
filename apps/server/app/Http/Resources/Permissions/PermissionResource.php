@@ -5,27 +5,23 @@ declare(strict_types=1);
 namespace App\Http\Resources\Permissions;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\JsonApi\JsonApiResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\Permission
  */
-final class PermissionResource extends JsonApiResource
+final class PermissionResource extends JsonResource
 {
     /**
-     * The resource's attributes.
+     * Transform the resource into an array.
      *
-     * @var array<string>
+     * @return array<string, mixed>
      */
-    public $attributes = [
-        'description',
-    ];
-
-    /**
-     * Get the resource's ID.
-     */
-    public function toId(Request $request): string
+    public function toArray(Request $request): array
     {
-        return $this->name;
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+        ];
     }
 }

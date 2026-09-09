@@ -27,11 +27,10 @@ return new class extends Migration
          */
         Schema::create($tableNames['permissions'], static function (Blueprint $table) {
             $table->id(); // permission id
-            $table->string('name')->index();
+            $table->string('name');
             $table->string('scope')->index();
             $table->json('description')->nullable();
             $table->string('guard_name');
-            $table->timestamps();
 
             $table->unique(['name', 'guard_name']);
         });
