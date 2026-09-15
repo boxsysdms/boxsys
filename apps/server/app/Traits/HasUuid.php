@@ -30,6 +30,14 @@ trait HasUuid
     }
 
     /**
+     * Get the route key name for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    /**
      * Boot the trait and assign a UUID to the model upon creation.
      */
     protected static function bootHasUuid(): void

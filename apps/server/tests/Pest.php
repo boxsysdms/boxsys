@@ -29,7 +29,55 @@ pest()
 */
 
 /**
- * Get the dataset for pagination page validation.
+ * Returns a closure that generates a fake localized dataset and optionally
+ * registers the generated locales into the runtime configuration.
+ *
+ * The returned closure generates an associative array where keys are unique
+ * ISO language codes and values are fake sentences. When the parameter
+ * `$appendLocalesToSupported` is true, the closure merges the newly
+ * generated locale codes into the `boxsys.locales.supported` array.
+ *
+ * @param  int  $items  The number of unique localized elements to generate.
+ * @param  bool  $appendLocalesToSupported  Whether to dynamically append the
+ *                                          generated locale keys to the
+ *                                          supported locales configuration.
+ * @return Closure(): array<string, string> A factory closure that returns
+ *                                          the array of translations.
+ */
+function generateTranslatableArray(int $items, bool $appendLocalesToSupported = true)
+{
+    return function () use ($items, $appendLocalesToSupported) {
+        $translatableArray = [];
+
+        for ($i = 0; $i < $items; $i++) {
+            $translatableArray[fake()->unique()->languageCode()] = fake()->sentence();
+        }
+
+        if ($appendLocalesToSupported) {
+            $supportedLocales = config('boxsys.locales.supported', []);
+
+            config([
+                'boxsys.locales.supported' => array_merge(
+                    $supportedLocales,
+                    array_keys($translatableArray)
+                ),
+            ]);
+        }
+
+        return $translatableArray;
+    };
+}
+
+/**
+ * Provides a structured dataset for testing pagination 'page' validation
+ * rules.
+ *
+ * Returns a matrix of test cases simulating various input scenarios for a
+ * pagination page parameter. Each dataset element maps a scenario key to
+ * an array containing the payload value and an expected validation error
+ * message closure (or null for valid inputs).
+ *
+ * @return array<string, array{0: mixed, 1: (Closure(): string)|null}>
  */
 function getPaginationPageDataset(): array
 {
@@ -41,7 +89,16 @@ function getPaginationPageDataset(): array
 }
 
 /**
- * Get the dataset for pagination per page validation.
+ * Provides a structured dataset for testing 'per page' validation rules.
+ *
+ * Generates a matrix of boundary and invalid test cases based on defined
+ * minimum and maximum limits. Each item maps a specific scenario to an
+ * array containing the test payload and an expected error message closure
+ * (or null for the valid scenario).
+ *
+ * @param  int  $minPerPage  The lowest allowed items per page threshold.
+ * @param  int  $maxPerPage  The highest allowed items per page threshold.
+ * @return array<string, array{0: mixed, 1: (Closure(): string)|null}>
  */
 function getPaginationPerPageDataset(int $minPerPage = 15, int $maxPerPage = 50): array
 {
@@ -63,7 +120,14 @@ function getPaginationPerPageDataset(int $minPerPage = 15, int $maxPerPage = 50)
 }
 
 /**
- * Get the dataset for pagination sort order validation.
+ * Provides a structured dataset for testing sort order validation rules.
+ *
+ * Returns a matrix of test cases for direction parameters (e.g., sorting).
+ * Each scenario maps to an array containing the input direction string and
+ * an expected validation error message closure, which evaluates to null for
+ * supported sorting directions ('asc' and 'desc').
+ *
+ * @return array<string, array{0: string, 1: (Closure(): string)|null}>
  */
 function getPaginationSortOrderDataset(): array
 {
