@@ -1,0 +1,288 @@
+info:
+  name: List Roles
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{SERVER_URL}}/roles?scope=system&search="
+  params:
+    - name: scope
+      value: system
+      type: query
+      description: Role scope. Required.
+    - name: search
+      value: ""
+      type: query
+      description: Search term. The search is performed against the role name and description in the selected language.
+    - name: sortBy
+      value: ""
+      type: query
+      description: Sort column. Defaults to displayName.
+      disabled: true
+    - name: sortOrder
+      value: ""
+      type: query
+      description: Sort order. Defaults to ascending order.
+      disabled: true
+    - name: page
+      value: ""
+      type: query
+      description: Page number. Defaults to 1.
+      disabled: true
+    - name: perPage
+      value: ""
+      type: query
+      description: Number of items per page. Minimum of 15 and maximum of 50. Defaults to 15.
+      disabled: true
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 OK
+    request:
+      url: "{{SERVER_URL}}/roles?scope=system&search="
+      method: GET
+      params:
+        - name: scope
+          value: system
+          type: query
+          description: Role scope. Required.
+        - name: search
+          value: ""
+          type: query
+          description: Search term. The search is performed against the role name and description in the selected language.
+        - name: sortBy
+          value: ""
+          type: query
+          description: Sort column. Defaults to displayName.
+          disabled: true
+        - name: sortOrder
+          value: ""
+          type: query
+          description: Sort order. Defaults to ascending order.
+          disabled: true
+        - name: page
+          value: ""
+          type: query
+          description: Page number. Defaults to 1.
+          disabled: true
+        - name: perPage
+          value: ""
+          type: query
+          description: Number of items per page. Minimum of 15 and maximum of 50. Defaults to 15.
+          disabled: true
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 11:14:36 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": [
+              {
+                "uuid": "b2de12b6-abe6-4b90-9231-b46e10ea23b4",
+                "scope": "system",
+                "displayName": "aut aspernatur",
+                "description": "Cupiditate dolores quis pariatur itaque minus.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:56:00.000000Z",
+                "updatedAt": "2026-09-15T10:56:00.000000Z",
+                "deletedAt": null
+              },
+              {
+                "uuid": "a1982031-0ef1-4df0-a963-7e899649d950",
+                "scope": "system",
+                "displayName": "autem nesciunt",
+                "description": "Nemo ad perferendis voluptatibus consequatur placeat et iste.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:55:59.000000Z",
+                "updatedAt": "2026-09-15T10:55:59.000000Z",
+                "deletedAt": null
+              },
+              {
+                "uuid": "ea7adeae-c27b-4092-bb13-47d78d14b227",
+                "scope": "system",
+                "displayName": "dolore ex",
+                "description": "Inventore voluptatem eaque possimus optio qui.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:56:00.000000Z",
+                "updatedAt": "2026-09-15T10:56:00.000000Z",
+                "deletedAt": null
+              },
+              {
+                "uuid": "25ec9f18-674f-4801-9479-1c6f299d4380",
+                "scope": "system",
+                "displayName": "eaque reprehenderit",
+                "description": "Dignissimos omnis laboriosam aperiam expedita quia voluptatem quo.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:56:00.000000Z",
+                "updatedAt": "2026-09-15T10:56:00.000000Z",
+                "deletedAt": null
+              },
+              {
+                "uuid": "290b8a0d-7358-48bf-ae30-39b4f188660b",
+                "scope": "system",
+                "displayName": "id nulla",
+                "description": "Asperiores magni laborum cupiditate asperiores possimus vel aperiam.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:56:00.000000Z",
+                "updatedAt": "2026-09-15T10:56:00.000000Z",
+                "deletedAt": null
+              },
+              {
+                "uuid": "32be7e10-3439-47c5-981e-97c7d529185b",
+                "scope": "system",
+                "displayName": "quia modi",
+                "description": "Quo deserunt sint commodi cum neque.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:56:00.000000Z",
+                "updatedAt": "2026-09-15T10:56:00.000000Z",
+                "deletedAt": null
+              },
+              {
+                "uuid": "aece4ccd-5225-4b8b-80e9-5a077305ece6",
+                "scope": "system",
+                "displayName": "totam molestias",
+                "description": "Et vel dolor iure soluta quasi quia eveniet atque.",
+                "usersCount": 0,
+                "permissionsCount": 0,
+                "createdAt": "2026-09-15T10:56:00.000000Z",
+                "updatedAt": "2026-09-15T10:56:00.000000Z",
+                "deletedAt": null
+              }
+            ],
+            "links": {
+              "first": "http://127.0.0.1:8000/roles?page=1",
+              "last": "http://127.0.0.1:8000/roles?page=1",
+              "prev": null,
+              "next": null
+            },
+            "meta": {
+              "current_page": 1,
+              "from": 1,
+              "last_page": 1,
+              "links": [
+                {
+                  "url": null,
+                  "label": "&laquo; Previous",
+                  "page": null,
+                  "active": false
+                },
+                {
+                  "url": "http://127.0.0.1:8000/roles?page=1",
+                  "label": "1",
+                  "page": 1,
+                  "active": true
+                },
+                {
+                  "url": null,
+                  "label": "Next &raquo;",
+                  "page": null,
+                  "active": false
+                }
+              ],
+              "path": "http://127.0.0.1:8000/roles",
+              "per_page": 15,
+              "to": 7,
+              "total": 7
+            }
+          }
+  - name: 422 Unprocessable Entity
+    request:
+      url: "{{SERVER_URL}}/roles?scope=xxx&search=&perPage=500"
+      method: GET
+      params:
+        - name: scope
+          value: xxx
+          type: query
+          description: Role scope. Required.
+        - name: search
+          value: ""
+          type: query
+          description: Search term. The search is performed against the role name and description in the selected language.
+        - name: sortBy
+          value: ""
+          type: query
+          description: Sort column. Defaults to displayName.
+          disabled: true
+        - name: sortOrder
+          value: ""
+          type: query
+          description: Sort order. Defaults to ascending order.
+          disabled: true
+        - name: page
+          value: ""
+          type: query
+          description: Page number. Defaults to 1.
+          disabled: true
+        - name: perPage
+          value: "500"
+          type: query
+          description: Number of items per page. Minimum of 15 and maximum of 50. Defaults to 15.
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 11:16:41 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "The selected scope is invalid. (and 1 more error)",
+            "errors": {
+              "scope": [
+                "The selected scope is invalid."
+              ],
+              "perPage": [
+                "The per page field must not be greater than 50."
+              ]
+            }
+          }
+
+docs: |
+  Lists the roles for a specific scope. The scope is required.
+
+  For each role, the response includes its identifier, name, description, total number of associated users and permissions, and timestamps. The `displayName` and `description` fields are translatable.
+
+  The client can specify the preferred language using the `lang` parameter or the `Accept-Language` header. If the requested language is not supported, the response is returned in the system’s configured default language.
+
+  Results are paginated. The client can specify the number of items per page using the `perPage` parameter, with a minimum of 15 and a maximum of 50. The requested page is specified using the `page` parameter.
+
+  Results can be sorted by `displayName`, `description`, `createdAt` or `updatedAt`. Sorting by `displayName` and `description` is performed using the selected language, or the system’s default language if no language is specified or the requested language is not supported.

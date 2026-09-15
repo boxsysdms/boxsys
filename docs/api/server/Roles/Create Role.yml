@@ -1,0 +1,170 @@
+info:
+  name: Create Role
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{SERVER_URL}}/roles"
+  body:
+    type: json
+    data: |-
+      {
+        "scope": "system",
+        "displayName": "My Role",
+        "description": "A simple role for testing purpose."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 201 Created
+    request:
+      url: "{{SERVER_URL}}/roles"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "scope": "system",
+            "displayName": "My Role",
+            "description": "A simple role for testing purpose."
+          }
+    response:
+      status: 201
+      statusText: Created
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 11:19:16 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": {
+              "uuid": "c68f024f-e2cc-4173-9a97-31a69b7f4106",
+              "scope": "system",
+              "displayName": "My Role",
+              "description": "A simple role for testing purpose.",
+              "usersCount": 0,
+              "permissionsCount": 0,
+              "createdAt": "2026-09-15T11:19:16.000000Z",
+              "updatedAt": "2026-09-15T11:19:16.000000Z",
+              "deletedAt": null
+            }
+          }
+  - name: 201 Create - With Translations
+    request:
+      url: "{{SERVER_URL}}/roles"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "scope": "system",
+            "displayName": {
+              "en": "My Role",
+              "pt": "Minha Função"
+            },
+            "description": {
+              "en": "A simple role for testing purpose.",
+              "pt": "Apenas uma função de teste."
+            }
+          }
+    response:
+      status: 201
+      statusText: Created
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 11:22:31 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": {
+              "uuid": "a10b6e12-a832-4bea-8580-e346332a6508",
+              "scope": "system",
+              "displayName": "My Role",
+              "description": "A simple role for testing purpose.",
+              "usersCount": 0,
+              "permissionsCount": 0,
+              "createdAt": "2026-09-15T11:22:31.000000Z",
+              "updatedAt": "2026-09-15T11:22:31.000000Z",
+              "deletedAt": null
+            }
+          }
+  - name: 422 Unprocessable Entity
+    request:
+      url: "{{SERVER_URL}}/roles"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "scope": "xxx",
+            "description": "A simple role for testing purpose."
+          }
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 11:25:56 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "The selected scope is invalid. (and 1 more error)",
+            "errors": {
+              "scope": [
+                "The selected scope is invalid."
+              ],
+              "displayName": [
+                "The displayName field is required."
+              ]
+            }
+          }
+
+docs: |
+  Creates a new role within a specific scope.
+
+  The `scope` and `displayName` fields are required. Both `displayName` and `description` can be provided either as strings or as objects, where each key is a language code and each value is the corresponding translation. When provided as strings, the values are associated with the requested language, or with the system’s default language if no supported language is specified.
+
+  The language is optional and can be specified using the `lang` parameter or the `Accept-Language` header. If no language is specified, or if the requested language is not supported, the system’s configured default language is used.
+
+  Returns the newly created role, including its `uuid`, `scope`, `name`, and `description`. The `displayName` and `description` fields are returned as strings in the selected language, or in the system’s default language when no supported language is specified.

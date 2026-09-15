@@ -1,0 +1,115 @@
+info:
+  name: Update Role
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{SERVER_URL}}/roles/:role"
+  params:
+    - name: role
+      value: ea4d6046-691f-4df9-a5c4-9d4ab9af8976
+      type: path
+      description: Role identifier.
+  body:
+    type: json
+    data: |-
+      {
+        "displayName": "My Role Updated",
+        "description": "A simple role for testing purpose (updated!)."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 200 OK
+    request:
+      url: "{{SERVER_URL}}/roles/ea4d6046-691f-4df9-a5c4-9d4ab9af8976"
+      method: PATCH
+      body:
+        type: json
+        data: |-
+          {
+            "scope": "system",
+            "displayName": "My Role Updated",
+            "description": "A simple role for testing purpose (updated!)."
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:01:58 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": {
+              "uuid": "ea4d6046-691f-4df9-a5c4-9d4ab9af8976",
+              "scope": "system",
+              "displayName": "My Role Updated",
+              "description": "A simple role for testing purpose (updated!).",
+              "usersCount": 0,
+              "permissionsCount": 0,
+              "createdAt": "2026-09-15T11:38:06.000000Z",
+              "updatedAt": "2026-09-15T12:01:58.000000Z",
+              "deletedAt": null
+            }
+          }
+  - name: 404 Not Found
+    request:
+      url: "{{SERVER_URL}}/roles/ea4d6046-691f-4df9-a5c4-9d4ab9af8971"
+      method: PATCH
+      body:
+        type: json
+        data: |-
+          {
+            "scope": "system",
+            "displayName": "My Role Updated",
+            "description": "A simple role for testing purpose (updated!)."
+          }
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:02:13 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "No query results for model [App\\Models\\Role] ea4d6046-691f-4df9-a5c4-9d4ab9af8971"
+          }
+
+docs: |-
+  Allows a role to be updated.
+
+  This endpoint performs a PATCH operation, so all parameters are optional. The role’s scope cannot be changed. The `displayName` and `description` fields can be provided either as strings or as objects, where each key is a language code and each value is the corresponding translation. When provided as strings, the values are associated with the requested language, or with the system’s default language if no supported language is specified.
+
+  Returns the role data, including its `uuid`, `scope`, `name`, and `description`. The `displayName` and `description` fields are returned as strings in the selected language, or in the system’s default language when no supported language is specified.

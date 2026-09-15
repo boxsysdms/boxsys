@@ -1,7 +1,7 @@
 opencollection: 1.0.0
 
 info:
-  name: server
+  name: Server
 config:
   proxy:
     inherit: true
@@ -22,7 +22,7 @@ request:
       value: application/json
   auth:
     type: bearer
-    token: "{{process.env.SERVER_API_TOKEN}}"
+    token: Bearer {{process.env.SERVER_API_TOKEN}}
 bundled: false
 extensions:
   bruno:
