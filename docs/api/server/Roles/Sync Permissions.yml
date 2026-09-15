@@ -1,0 +1,138 @@
+info:
+  name: Sync Permissions
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{SERVER_URL}}/roles/:role/permissions"
+  params:
+    - name: role
+      value: ea4d6046-691f-4df9-a5c4-9d4ab9af8976
+      type: path
+      description: Role identifier.
+  body:
+    type: json
+    data: |-
+      {
+        "permissions": [
+          "system.roles.list",
+          "system.roles.view"
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 204 No Content
+    request:
+      url: "{{SERVER_URL}}/roles/ea4d6046-691f-4df9-a5c4-9d4ab9af8976/permissions"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "permissions": [
+              "system.roles.list",
+              "system.roles.view"
+            ]
+          }
+    response:
+      status: 204
+      statusText: No Content
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:15:04 GMT
+      body:
+        type: text
+        data: ""
+  - name: 404 Not Found
+    request:
+      url: "{{SERVER_URL}}/roles/ea4d6046-691f-4df9-a5c4-9d4ab9af8971/permissions"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "permissions": [
+              "system.roles.list",
+              "system.roles.view"
+            ]
+          }
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:15:20 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "No query results for model [App\\Models\\Role] ea4d6046-691f-4df9-a5c4-9d4ab9af8971"
+          }
+  - name: 422 Unprocessable Entity
+    request:
+      url: "{{SERVER_URL}}/roles/ea4d6046-691f-4df9-a5c4-9d4ab9af8976/permissions"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+          }
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:15:41 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "The permissions field must be present.",
+            "errors": {
+              "permissions": [
+                "The permissions field must be present."
+              ]
+            }
+          }
+
+docs: |
+  Synchronizes the permissions assigned to a role.
+
+  This operation removes all existing permissions from the role and assigns only those specified in the request. An error is returned if any of the specified permissions is invalid.

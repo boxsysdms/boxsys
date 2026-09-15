@@ -1,0 +1,186 @@
+info:
+  name: Assign Users
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{SERVER_URL}}/roles/:role/users/assign"
+  params:
+    - name: role
+      value: ea4d6046-691f-4df9-a5c4-9d4ab9af8976
+      type: path
+      description: Role identifier.
+  body:
+    type: json
+    data: |-
+      {
+        "users": []
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 204 No Content - Using UUID
+    request:
+      url: "{{SERVER_URL}}/roles/:role/users/assign"
+      method: POST
+      params:
+        - name: role
+          value: ea4d6046-691f-4df9-a5c4-9d4ab9af8976
+          type: path
+          description: Role identifier.
+      body:
+        type: json
+        data: |-
+          {
+            "users": [
+              "10126af7-dc67-4ed2-9ea3-203cf805b7c4",
+              "9f1b4289-0b7a-4a7a-b641-399f419c998c"
+            ]
+          }
+    response:
+      status: 204
+      statusText: No Content
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:27:34 GMT
+      body:
+        type: text
+        data: ""
+  - name: 404 Not Found
+    request:
+      url: "{{SERVER_URL}}/roles/:role/users/assign"
+      method: POST
+      params:
+        - name: role
+          value: ea4d6046-691f-4df9-a5c4-9d4ab9af8971
+          type: path
+          description: Role identifier.
+      body:
+        type: json
+        data: |-
+          {
+            "users": [
+              "10126af7-dc67-4ed2-9ea3-203cf805b7c4",
+              "9f1b4289-0b7a-4a7a-b641-399f419c998c"
+            ]
+          }
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:27:59 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "No query results for model [App\\Models\\Role] ea4d6046-691f-4df9-a5c4-9d4ab9af8971"
+          }
+  - name: 204 No Content - Using Email
+    request:
+      url: "{{SERVER_URL}}/roles/:role/users/assign"
+      method: POST
+      params:
+        - name: role
+          value: ea4d6046-691f-4df9-a5c4-9d4ab9af8976
+          type: path
+          description: Role identifier.
+      body:
+        type: json
+        data: |-
+          {
+            "users": [
+              "sheila.lowe@example.net",
+              "slind@example.net"
+            ]
+          }
+    response:
+      status: 204
+      statusText: No Content
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:31:42 GMT
+      body:
+        type: text
+        data: ""
+  - name: 422 Unprocessable Entity
+    request:
+      url: "{{SERVER_URL}}/roles/:role/users/assign"
+      method: POST
+      params:
+        - name: role
+          value: ea4d6046-691f-4df9-a5c4-9d4ab9af8976
+          type: path
+          description: Role identifier.
+      body:
+        type: json
+        data: |-
+          {
+            "users": []
+          }
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:32:28 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "The users field is required.",
+            "errors": {
+              "users": [
+                "The users field is required."
+              ]
+            }
+          }
+
+docs: |-
+  Associates one or more users with a role.
+
+  Users can be identified by their identifier or email address. A user must be active to be associated with the role. Note that this endpoint does not return an error or message if a specified user does not exist.

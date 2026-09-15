@@ -1,0 +1,72 @@
+info:
+  name: Delete Role
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{SERVER_URL}}/roles/:role"
+  params:
+    - name: role
+      value: 290b8a0d-7358-48bf-ae30-39b4f188660b
+      type: path
+      description: Role identifier.
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: 204 No Content
+    request:
+      url: "{{SERVER_URL}}/roles/290b8a0d-7358-48bf-ae30-39b4f188660b"
+      method: DELETE
+    response:
+      status: 204
+      statusText: No Content
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:10:29 GMT
+      body:
+        type: text
+        data: ""
+  - name: 404 Not Found
+    request:
+      url: "{{SERVER_URL}}/roles/290b8a0d-7358-48bf-ae30-39b4f188660b"
+      method: DELETE
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 12:10:46 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "No query results for model [App\\Models\\Role] 290b8a0d-7358-48bf-ae30-39b4f188660b"
+          }
+
+docs: Deletes a role.

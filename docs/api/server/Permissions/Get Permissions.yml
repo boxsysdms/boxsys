@@ -5,10 +5,10 @@ info:
 
 http:
   method: GET
-  url: "{{SERVER_URL}}/permissions?scope=system"
+  url: "{{SERVER_URL}}/permissions?scope=xxx"
   params:
     - name: scope
-      value: system
+      value: xxx
       type: query
   auth: inherit
 
@@ -17,3 +17,304 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+examples:
+  - name: 200 OK
+    request:
+      url: "{{SERVER_URL}}/permissions?scope=system"
+      method: GET
+      params:
+        - name: scope
+          value: system
+          type: query
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 10:50:14 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": [
+              {
+                "name": "system.roles.create",
+                "description": "Create role"
+              },
+              {
+                "name": "system.roles.delete",
+                "description": "Delete role"
+              },
+              {
+                "name": "system.roles.list",
+                "description": "List roles"
+              },
+              {
+                "name": "system.roles.permissions",
+                "description": "Manage role permissions"
+              },
+              {
+                "name": "system.roles.update",
+                "description": "Update role"
+              },
+              {
+                "name": "system.roles.users",
+                "description": "Manage role users"
+              },
+              {
+                "name": "system.roles.view",
+                "description": "View role"
+              }
+            ],
+            "links": {
+              "first": "http://127.0.0.1:8000/permissions?page=1",
+              "last": "http://127.0.0.1:8000/permissions?page=1",
+              "prev": null,
+              "next": null
+            },
+            "meta": {
+              "current_page": 1,
+              "from": 1,
+              "last_page": 1,
+              "links": [
+                {
+                  "url": null,
+                  "label": "&laquo; Previous",
+                  "page": null,
+                  "active": false
+                },
+                {
+                  "url": "http://127.0.0.1:8000/permissions?page=1",
+                  "label": "1",
+                  "page": 1,
+                  "active": true
+                },
+                {
+                  "url": null,
+                  "label": "Next &raquo;",
+                  "page": null,
+                  "active": false
+                }
+              ],
+              "path": "http://127.0.0.1:8000/permissions",
+              "per_page": 15,
+              "to": 7,
+              "total": 7
+            }
+          }
+  - name: 200 OK - Empty
+    request:
+      url: "{{SERVER_URL}}/permissions?scope=collection"
+      method: GET
+      params:
+        - name: scope
+          value: collection
+          type: query
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 10:50:46 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": [],
+            "links": {
+              "first": "http://127.0.0.1:8000/permissions?page=1",
+              "last": "http://127.0.0.1:8000/permissions?page=1",
+              "prev": null,
+              "next": null
+            },
+            "meta": {
+              "current_page": 1,
+              "from": null,
+              "last_page": 1,
+              "links": [
+                {
+                  "url": null,
+                  "label": "&laquo; Previous",
+                  "page": null,
+                  "active": false
+                },
+                {
+                  "url": "http://127.0.0.1:8000/permissions?page=1",
+                  "label": "1",
+                  "page": 1,
+                  "active": true
+                },
+                {
+                  "url": null,
+                  "label": "Next &raquo;",
+                  "page": null,
+                  "active": false
+                }
+              ],
+              "path": "http://127.0.0.1:8000/permissions",
+              "per_page": 15,
+              "to": null,
+              "total": 0
+            }
+          }
+  - name: 200 OK - With language
+    request:
+      url: "{{SERVER_URL}}/permissions?scope=system"
+      method: GET
+      headers:
+        - name: Accept-Language
+          value: pt
+      params:
+        - name: scope
+          value: system
+          type: query
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 10:51:34 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "data": [
+              {
+                "name": "system.roles.create",
+                "description": "Criar função"
+              },
+              {
+                "name": "system.roles.delete",
+                "description": "Excluir função"
+              },
+              {
+                "name": "system.roles.list",
+                "description": "Listar funções"
+              },
+              {
+                "name": "system.roles.permissions",
+                "description": "Gerenciar permissões da função"
+              },
+              {
+                "name": "system.roles.update",
+                "description": "Atualizar função"
+              },
+              {
+                "name": "system.roles.users",
+                "description": "Gerenciar utilizadores da função"
+              },
+              {
+                "name": "system.roles.view",
+                "description": "Visualizar função"
+              }
+            ],
+            "links": {
+              "first": "http://127.0.0.1:8000/permissions?page=1",
+              "last": "http://127.0.0.1:8000/permissions?page=1",
+              "prev": null,
+              "next": null
+            },
+            "meta": {
+              "current_page": 1,
+              "from": 1,
+              "last_page": 1,
+              "links": [
+                {
+                  "url": null,
+                  "label": "&laquo; Previous",
+                  "page": null,
+                  "active": false
+                },
+                {
+                  "url": "http://127.0.0.1:8000/permissions?page=1",
+                  "label": "1",
+                  "page": 1,
+                  "active": true
+                },
+                {
+                  "url": null,
+                  "label": "Next &raquo;",
+                  "page": null,
+                  "active": false
+                }
+              ],
+              "path": "http://127.0.0.1:8000/permissions",
+              "per_page": 15,
+              "to": 7,
+              "total": 7
+            }
+          }
+  - name: 422 Unprocessable Entity
+    request:
+      url: "{{SERVER_URL}}/permissions?scope=xxx"
+      method: GET
+      params:
+        - name: scope
+          value: xxx
+          type: query
+    response:
+      status: 422
+      statusText: Unprocessable Entity
+      headers:
+        - name: host
+          value: 127.0.0.1:8000
+        - name: connection
+          value: close
+        - name: x-powered-by
+          value: PHP/8.5.4
+        - name: cache-control
+          value: no-cache, private
+        - name: date
+          value: Tue, 15 Sep 2026 10:53:02 GMT
+        - name: content-type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "message": "The selected scope is invalid.",
+            "errors": {
+              "scope": [
+                "The selected scope is invalid."
+              ]
+            }
+          }
+
+docs: |-
+  Lists the permissions supported by the system for a specific scope. The scope is required. For each permission, the response includes its technical name and description. Only the description is translatable.
+
+  The client can specify the preferred language using the `lang` parameter or the `Accept-Language` header. If the requested language is not supported, the response is returned in the system’s configured default language.
+
+  Results are paginated. The client can specify the number of items per page using the `perPage` parameter, with a minimum of 15 and a maximum of 100. The requested page is specified using the `page` parameter. Results cannot be sorted.
