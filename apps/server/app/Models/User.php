@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property-read int $id
@@ -33,7 +34,7 @@ use Laravel\Sanctum\HasApiTokens;
 final class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, HasUuid, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, HasUuid, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.

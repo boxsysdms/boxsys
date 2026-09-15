@@ -56,12 +56,13 @@ function testFormRequestValidations(
     string $method,
     string $route,
     array $fieldsWithDatasets,
-    ?Closure $routeParameters = null
+    ?Closure $routeParameters = null,
+    array|Closure|null $alwaysIncludedData = null
 ): void {
     foreach ($fieldsWithDatasets as $field => $dataset) {
         it(
             "validates {$field} field",
-            function (mixed $value, ?string $expectedError = null) use ($method, $route, $field, $routeParameters) {
+            function (mixed $value, ?string $expectedError = null) use ($method, $route, $field, $routeParameters, $alwaysIncludedData) {
                 $user = test()->user;
 
                 // In Pest all datasets are evaluated before running the test,
@@ -71,10 +72,20 @@ function testFormRequestValidations(
                 // Prepare request parameters. If $value is an array with
                 // multiple entries, use it as is. Useful for testing complex
                 // validation scenarios where field dependencies exist.
-                $parameters = is_array($value) && count($value) > 1 ? $value : [$field => $value];
+                $parameters = is_array($value) && count($value) > 1
+                    ? $value
+                    : [$field => $value];
 
                 // Evaluate any closures in the parameters to get their actual values.
                 $parameters = array_map(fn ($value) => $value instanceof Closure ? $value() : $value, $parameters);
+
+                // Evaluate any closures in the always included data to get their
+                // actual values. If it is null, default to an empty array.
+                $alwaysIncludedData = $alwaysIncludedData instanceof Closure
+                    ? $alwaysIncludedData()
+                    : ($alwaysIncludedData ?? []);
+
+                $parameters = array_merge($alwaysIncludedData, $parameters);
 
                 // In GET requests, parameters are sent as query parameters. In
                 // other requests, they are sent as JSON body, but we still need
@@ -83,9 +94,21 @@ function testFormRequestValidations(
                     ? actingAs($user)->json('GET', route($route, [...$routeParameters, ...$parameters]))
                     : actingAs($user)->json($method, route($route, $routeParameters), $parameters);
 
-                $expectedError
-                    ? expect($response->json("errors.{$field}.0"))->toBe($expectedError)
-                    : expect($response->json("errors.{$field}"))->toBeNull();
+                if ($response->status() === Response::HTTP_NO_CONTENT) {
+                    expect(true)->toBe(true);   // No content response, test passes automatically.
+
+                    return;
+                }
+
+                $errors = $response->json('errors');
+
+                $error = $errors["{$field}.0"][0]
+                    ?? $errors[$field][0]
+                    ?? null;
+
+                is_null($expectedError)
+                    ? expect($error)->toBeNull()
+                    : expect($error)->toBe($expectedError);
             }
         )->with(
             $dataset instanceof Closure ? $dataset() : $dataset

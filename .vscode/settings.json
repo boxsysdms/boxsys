@@ -1,0 +1,24 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /home/blimundo/boxsolutions/boxsys/apps/server && php artisan test tests/Unit/Data/Permissions/SyncPermissionsDataTest\\.php tests/Unit/Actions/Roles/SyncRolePermissionsActionTest\\.php$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /home/blimundo/boxsolutions/boxsys/apps/server && php artisan test tests/Unit/Http/Controllers/Roles tests/Unit/Http/Resources/Roles$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /home/blimundo/boxsolutions/boxsys/apps/server && php artisan test tests/Unit/Actions/Roles tests/Unit/Data/Roles tests/Unit/Data/Permissions/SyncPermissionsDataTest\\.php tests/Unit/Models/RoleTest\\.php tests/Unit/Http/Controllers/Roles tests/Unit/Http/Resources/Roles$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /home/blimundo/boxsolutions/boxsys/apps/server && php artisan test tests/Unit/Http/Controllers/Roles tests/Unit/Http/Resources/Roles tests/Unit/Actions/Roles tests/Unit/Data/Roles tests/Unit/Models/RoleTest\\.php$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /home/blimundo/boxsolutions/boxsys/apps/server && php artisan test tests/Feature/Http/Controllers/Roles$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
