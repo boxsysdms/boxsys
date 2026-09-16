@@ -2,47 +2,21 @@
 
 declare(strict_types=1);
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "pest()" function to bind a different classes or traits.
-|
-*/
-
 pest()
     ->extend(Tests\TestCase::class)
     ->in('Unit', 'Feature');
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
 /**
- * Returns a closure that generates a fake localized dataset and optionally
- * registers the generated locales into the runtime configuration.
+ * Generates a closure that returns an array of fake translations for testing.
  *
- * The returned closure generates an associative array where keys are unique
- * ISO language codes and values are fake sentences. When the parameter
- * `$appendLocalesToSupported` is true, the closure merges the newly
- * generated locale codes into the `boxsys.locales.supported` array.
+ * Each translation is assigned a unique language code and a fake sentence.
+ * When enabled, the generated locales are also added to the configured
+ * list of supported locales.
  *
- * @param  int  $items  The number of unique localized elements to generate.
- * @param  bool  $appendLocalesToSupported  Whether to dynamically append the
- *                                          generated locale keys to the
- *                                          supported locales configuration.
- * @return Closure(): array<string, string> A factory closure that returns
- *                                          the array of translations.
+ * @param  int  $items  Number of translations to generate.
+ * @param  bool  $appendLocalesToSupported  Whether to add the generated locales
+ *                                          to the supported locales configuration.
+ * @return Closure(): array<string, string>
  */
 function generateTranslatableArray(int $items, bool $appendLocalesToSupported = true)
 {
@@ -69,36 +43,33 @@ function generateTranslatableArray(int $items, bool $appendLocalesToSupported = 
 }
 
 /**
- * Provides a structured dataset for testing pagination 'page' validation
- * rules.
+ * Provides dataset cases for testing the pagination 'page' parameter,
+ * including invalid and valid values.
  *
- * Returns a matrix of test cases simulating various input scenarios for a
- * pagination page parameter. Each dataset element maps a scenario key to
- * an array containing the payload value and an expected validation error
- * message closure (or null for valid inputs).
- *
- * @return array<string, array{0: mixed, 1: (Closure(): string)|null}>
+ * @return array<string, array{mixed, ?string}>
  */
 function getPaginationPageDataset(): array
 {
     return [
-        'integer' => ['abc', fn () => __('validation.integer', ['attribute' => 'page'])],
-        'minimum' => [0, fn () => __('validation.min.numeric', ['attribute' => 'page', 'min' => 1])],
+        'integer' => [
+            'abc',
+            fn () => __('validation.integer', ['attribute' => 'page']),
+        ],
+        'minimum' => [
+            0,
+            fn () => __('validation.min.numeric', ['attribute' => 'page', 'min' => 1]),
+        ],
         'valid' => [1, null],
     ];
 }
 
 /**
- * Provides a structured dataset for testing 'per page' validation rules.
+ * Provides dataset cases for testing the pagination 'perPage' parameter,
+ * including invalid and valid values.
  *
- * Generates a matrix of boundary and invalid test cases based on defined
- * minimum and maximum limits. Each item maps a specific scenario to an
- * array containing the test payload and an expected error message closure
- * (or null for the valid scenario).
- *
- * @param  int  $minPerPage  The lowest allowed items per page threshold.
- * @param  int  $maxPerPage  The highest allowed items per page threshold.
- * @return array<string, array{0: mixed, 1: (Closure(): string)|null}>
+ * @param  int  $minPerPage  Minimum number of items allowed per page.
+ * @param  int  $maxPerPage  Maximum number of items allowed per page.
+ * @return array<string, array{mixed, ?string}>
  */
 function getPaginationPerPageDataset(int $minPerPage = 15, int $maxPerPage = 50): array
 {
@@ -120,20 +91,19 @@ function getPaginationPerPageDataset(int $minPerPage = 15, int $maxPerPage = 50)
 }
 
 /**
- * Provides a structured dataset for testing sort order validation rules.
+ * Provides dataset cases for testing the pagination 'sortOrder' parameter,
+ * including valid and invalid values.
  *
- * Returns a matrix of test cases for direction parameters (e.g., sorting).
- * Each scenario maps to an array containing the input direction string and
- * an expected validation error message closure, which evaluates to null for
- * supported sorting directions ('asc' and 'desc').
- *
- * @return array<string, array{0: string, 1: (Closure(): string)|null}>
+ * @return array<string, array{string, ?string}>
  */
 function getPaginationSortOrderDataset(): array
 {
     return [
         'ascending' => ['asc', null],
         'descending' => ['desc', null],
-        'invalid' => ['invalid', fn () => __('validation.in', ['attribute' => 'sort order'])],
+        'invalid' => [
+            'invalid',
+            fn () => __('validation.in', ['attribute' => 'sort order']),
+        ],
     ];
 }

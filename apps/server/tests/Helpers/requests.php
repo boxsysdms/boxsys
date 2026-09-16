@@ -21,7 +21,7 @@ use function Pest\Laravel\json;
  */
 function testAuthenticationAndAuthorization(string $method, string $route, ?Closure $routeParameters = null, bool $withAuthorization = true): void
 {
-    it('prevents unauthenticated users from accessing', function () use ($method, $route, $routeParameters) {
+    it('returns 401 for unauthenticated users', function () use ($method, $route, $routeParameters) {
         $routeParameters = $routeParameters ? $routeParameters() : [];
         $response = $method === 'GET'
             ? json('GET', route($route, $routeParameters))
@@ -31,13 +31,12 @@ function testAuthenticationAndAuthorization(string $method, string $route, ?Clos
     });
 
     if ($withAuthorization) {
-        it('prevents unauthorized users from accessing', function () use ($method, $route, $routeParameters) {
+        it('returns 403 for users without permission', function () use ($method, $route, $routeParameters) {
             $routeParameters = $routeParameters ? $routeParameters() : [];
             $userWithoutPermission = User::factory()->create();
 
-            $response = $method === 'GET'
-                ? actingAs($userWithoutPermission)->json('GET', route($route, $routeParameters))
-                : actingAs($userWithoutPermission)->json($method, route($route, $routeParameters));
+            $response = actingAs($userWithoutPermission)
+                ->json($method, route($route, $routeParameters));
 
             expect($response->status())->toBe(Response::HTTP_FORBIDDEN);
         });
