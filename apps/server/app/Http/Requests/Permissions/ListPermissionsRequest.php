@@ -26,7 +26,11 @@ final class ListPermissionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'scope' => ['required', 'string', new Enum(\App\Enums\PermissionScope::class)],
+            'scope' => [
+                'required',
+                'string',
+                new Enum(\App\Enums\PermissionScope::class),
+            ],
             'page' => ['nullable', 'integer', 'min:1'],
             'perPage' => ['nullable', 'integer', 'min:15', 'max:100'],
         ];

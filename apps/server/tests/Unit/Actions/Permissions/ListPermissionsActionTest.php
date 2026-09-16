@@ -10,61 +10,67 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('unit', 'actions', 'permissions');
 
-it('returns only permissions for the specified scope', function () {
-    Permission::factory(3)->system()->create();
-    Permission::factory(2)->collection()->create();
+describe('listing permissions', function () {
+    it('returns only permissions for the specified scope', function () {
+        Permission::factory(3)->system()->create();
+        Permission::factory(2)->collection()->create();
 
-    $data = new ListPermissionsData(PermissionScope::COLLECTION);
+        $result = resolve(ListPermissionsAction::class)
+            ->handle(
+                new ListPermissionsData(PermissionScope::COLLECTION)
+            );
 
-    $result = resolve(ListPermissionsAction::class)->handle($data);
+        expect($result)->toHaveCount(2);
+    });
 
-    expect($result)->toHaveCount(2);
-});
+    it('returns an empty list when no permissions exists for the specified scope', function () {
+        $result = resolve(ListPermissionsAction::class)
+            ->handle(
+                new ListPermissionsData(PermissionScope::SYSTEM)
+            );
 
-it('returns an empty list when no permissions exists for the specified scope', function () {
-    $data = new ListPermissionsData(PermissionScope::SYSTEM);
+        expect($result)->toHaveCount(0);
+    });
 
-    $result = resolve(ListPermissionsAction::class)->handle($data);
+    it('returns permissions sorted by name in ascending order', function () {
+        Permission::factory(3)
+            ->system()
+            ->sequence(
+                ['name' => 'Mango'],
+                ['name' => 'Zebra'],
+                ['name' => 'Apple'],
+            )
+            ->create();
 
-    expect($result)->toHaveCount(0);
-});
+        $result = resolve(ListPermissionsAction::class)
+            ->handle(
+                new ListPermissionsData(PermissionScope::SYSTEM)
+            );
 
-it('returns a list of permissions sorted by name in ascending order', function () {
-    Permission::factory(3)
-        ->system()
-        ->sequence(
-            ['name' => 'Mango'],
-            ['name' => 'Zebra'],
-            ['name' => 'Apple'],
-        )
-        ->create();
+        expect($result[0]->name)->toBe('Apple')
+            ->and($result[1]->name)->toBe('Mango')
+            ->and($result[2]->name)->toBe('Zebra');
+    });
 
-    $data = new ListPermissionsData(PermissionScope::SYSTEM);
+    it('returns paginated results', function () {
+        Permission::factory(15)->system()->create();
 
-    $result = resolve(ListPermissionsAction::class)->handle($data);
+        $result = resolve(ListPermissionsAction::class)
+            ->handle(
+                new ListPermissionsData(
+                    scope: PermissionScope::SYSTEM,
+                    page: 2,
+                    perPage: 5
+                )
+            );
 
-    expect($result[0]->name)->toBe('Apple')
-        ->and($result[1]->name)->toBe('Mango')
-        ->and($result[2]->name)->toBe('Zebra');
-});
+        expect($result)->toBeInstanceOf(Illuminate\Pagination\LengthAwarePaginator::class);
 
-it('returns paginated results', function () {
-    Permission::factory(15)->system()->create();
-
-    $data = new ListPermissionsData(
-        scope: PermissionScope::SYSTEM,
-        page: 2,
-        perPage: 5
-    );
-
-    $result = resolve(ListPermissionsAction::class)->handle($data);
-
-    expect($result)->toBeInstanceOf(Illuminate\Pagination\LengthAwarePaginator::class);
-
-    expect($result)
-        ->total()->toBe(15)
-        ->perPage()->toBe(5)
-        ->currentPage()->toBe(2)
-        ->count()->toBe(5)
-        ->first()->toBeInstanceOf(Permission::class);
+        expect($result)
+            ->total()->toBe(15)
+            ->perPage()->toBe(5)
+            ->currentPage()->toBe(2)
+            ->count()->toBe(5)
+            ->first()->toBeInstanceOf(Permission::class);
+    });
 });

@@ -74,7 +74,7 @@ function testUuidField(string $class, bool $fullTest = false): void
         })->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
         it('excludes soft deleted models from UUID lookup', function () use ($class) {
-            $model = tap($class::factory()->create(), fn(Model $model) => $model->delete());
+            $model = tap($class::factory()->create(), fn (Model $model) => $model->delete());
 
             expect($class::findByUuid($model->uuid))->toBeNull();
         });

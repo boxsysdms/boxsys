@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Actions\Permissions;
 
 use App\Data\Permissions\ListPermissionsData;
+use App\Enums\PermissionScope;
 use App\Models\Permission;
 
+/**
+ * Handles the retrieval of permissions with filtering and pagination.
+ */
 final class ListPermissionsAction
 {
     /**
@@ -14,9 +18,12 @@ final class ListPermissionsAction
      */
     public function handle(ListPermissionsData $data)
     {
-        return Permission::query()
-            ->where('scope', $data->scope)
-            ->orderBy('name', 'asc')
+        $query = $data->scope === PermissionScope::SYSTEM
+            ? Permission::query()->system()
+            : Permission::query()->collection();
+
+        return $query
+            ->orderBy('name')
             ->paginate(page: $data->page, perPage: $data->perPage);
     }
 }

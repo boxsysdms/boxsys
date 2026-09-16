@@ -8,43 +8,49 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('unit', 'models', 'permissions');
 
-it('has correct array keys and types', function () {
-    $permission = Permission::factory()->create()->refresh();
+describe('attributes', function () {
+    it('has the expected attributes and types', function () {
+        $permission = Permission::factory()->create()->refresh();
 
-    expect($permission->toArray())
-        ->toHaveKeys([
-            'id',
-            'name',
-            'scope',
-            'description',
-        ]);
+        expect($permission->toArray())
+            ->toHaveKeys([
+                'id',
+                'name',
+                'scope',
+                'description',
+            ]);
 
-    expect($permission)
-        ->id->toBeInt()
-        ->name->toBeString()
-        ->scope->not->toBeNull()
-        ->description->toBeString()
-        ->guard_name->toBe('web');
+        expect($permission)
+            ->id->toBeInt()
+            ->name->toBeString()
+            ->scope->not->toBeNull()
+            ->description->toBeString()
+            ->guard_name->toBe('web');
+    });
+
+    it('casts scope to PermissionScope', function () {
+        $permission = Permission::factory()->create()->refresh();
+
+        expect($permission->scope)->toBeInstanceOf(PermissionScope::class);
+    });
 });
 
-it('casts scope to enum', function () {
-    $permission = Permission::factory()->create()->refresh();
+describe('translations', function () {
+    it('has translations for description', function () {
+        $permission = Permission::factory()->create()->refresh();
 
-    expect($permission->scope)->toBeInstanceOf(PermissionScope::class);
+        $translations = $permission->getTranslations('description');
+
+        expect($translations)->toHaveKeys(['en', 'pt']);
+    });
 });
 
-it('has translations for description', function () {
-    $permission = Permission::factory()->create()->refresh();
+describe('query scopes', function () {
+    it('filters permissions by scope', function () {
+        Permission::factory()->system()->create();
+        Permission::factory()->collection()->create();
 
-    $translations = $permission->getTranslations('description');
-
-    expect($translations)->toHaveKeys(['en', 'pt']);
-});
-
-it('filters permissions by scope using query scopes', function () {
-    Permission::factory()->system()->create();
-    Permission::factory()->collection()->create();
-
-    expect(Permission::system()->count())->toBe(1);
-    expect(Permission::collection()->count())->toBe(1);
+        expect(Permission::system()->count())->toBe(1);
+        expect(Permission::collection()->count())->toBe(1);
+    });
 });

@@ -7,6 +7,9 @@ namespace App\Data\Permissions;
 use App\Enums\PermissionScope;
 use Spatie\LaravelData\Dto;
 
+/**
+ * Encapsulates the parameters for listing permissions.
+ */
 final class ListPermissionsData extends Dto
 {
     public function __construct(

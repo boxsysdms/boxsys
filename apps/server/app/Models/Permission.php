@@ -18,6 +18,9 @@ use Spatie\Translatable\HasTranslations;
  * @property-read PermissionScope $scope
  * @property-read string|null $description
  * @property-read string $guard_name
+ *
+ * @method static Builder<self> system()
+ * @method static Builder<self> collection()
  */
 #[Unguarded]
 #[Translatable('description')]

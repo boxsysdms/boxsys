@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+/**
+ * Defines the permissions available in the system.
+ *
+ * Centralizes permission identifiers to avoid hardcoding permission names
+ * throughout the application.
+ */
 enum Permission: string
 {
-    // Roles
+    /* Roles */
     case ROLES_CREATE = 'system.roles.create';
     case ROLES_DELETE = 'system.roles.delete';
     case ROLES_LIST = 'system.roles.list';
@@ -15,7 +21,7 @@ enum Permission: string
     case ROLES_USERS = 'system.roles.users';
     case ROLES_VIEW = 'system.roles.view';
 
-    // Test
+    /* Test */
     case TEST_SCOPE = 'collection.test.scope';
 
     public function scope(): string

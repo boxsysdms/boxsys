@@ -7,6 +7,9 @@ namespace App\Data\Permissions;
 use App\Enums\Permission;
 use Spatie\LaravelData\Dto;
 
+/**
+ * Encapsulates the permissions to be synchronized.
+ */
 final class SyncPermissionsData extends Dto
 {
     /**
