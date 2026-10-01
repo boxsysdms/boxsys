@@ -1,0 +1,10 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "lint": "composer lint",
+        "types": "composer test:types",
+        "dev": "php artisan serve"
+    }
+}
