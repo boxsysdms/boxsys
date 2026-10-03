@@ -1,16 +1,16 @@
 name: Release Server
 
 on:
-	push:
-		branches:
-			- preview
-		tags:
-			- '*'
-	workflow_dispatch:
+  push:
+    branches:
+      - preview
+    tags:
+      - '*'
+  workflow_dispatch:
 
 permissions:
-	contents: read
-	packages: write
+  contents: read
+  packages: write
 
 jobs:
 	release-server:
