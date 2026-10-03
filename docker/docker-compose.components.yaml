@@ -1,0 +1,55 @@
+### Docker Compose components template ###
+
+# This file defines reusable component templates for application services:
+# - server-app: Main backend application (always active)
+#
+# These templates are used as base definitions that can be extended by other
+# compose files (docker-compose.dev.yml, docker-compose.build.yml,
+# docker-compose.registry.yml) to add specific configurations like ports,
+# volumes, build contexts, or image sources.
+#
+# Components are controlled via profiles:
+# - server-app has no profile and runs always
+# - Optional components use profiles (ai, processing, workers) and only run when explicitly enabled:
+#   COMPOSE_PROFILES=ai docker compose up
+#   COMPOSE_PROFILES=ai,processing,workers docker compose up
+#
+# All components are configured with:
+# - Health checks for startup verification
+# - Environment variables for configuration
+# - Dependencies on required services (database, cache, storage)
+# - Networking through the shared 'boxsys-network'
+
+services:
+  server-app:
+    build: 
+      context: ..
+      dockerfile: apps/server/Dockerfile
+    environment:
+      APP_ENV: ${SERVER_APP_ENV}
+      APP_KEY: ${SERVER_APP_KEY}
+      APP_DEBUG: ${SERVER_APP_DEBUG}
+      APP_URL: ${SERVER_APP_URL}
+      DB_CONNECTION: pgsql
+      DB_HOST: ${SERVER_DB_HOST}
+      DB_PORT: ${SERVER_DB_PORT}
+      DB_DATABASE: ${SERVER_DB_NAME}
+      DB_USERNAME: ${SERVER_DB_USER}
+      DB_PASSWORD: ${SERVER_DB_PASSWORD}
+      CACHE_STORE: redis
+      REDIS_HOST: ${SERVER_CACHE_HOST}
+      REDIS_PORT: ${SERVER_CACHE_PORT}
+      REDIS_PASSWORD: ${SERVER_CACHE_PASSWORD}
+      SESSION_DRIVER: redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/up || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - boxsys-network
+    depends_on:
+      server-db:
+          condition: service_healthy
+      server-cache:
+          condition: service_healthy

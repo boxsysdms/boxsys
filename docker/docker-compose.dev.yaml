@@ -1,0 +1,17 @@
+services:
+  server-app:
+    extends:
+      file: docker-compose.components.yaml
+      service: server-app
+    ports:
+      - "${SERVER_APP_PORT}:80"
+    volumes:
+      - ../apps/server:/var/www/html
+    develop:
+      watch:
+        - action: sync
+          path: ../apps/server
+          target: /var/www/html
+          ignore:
+            - .git
+            - vendor

@@ -1,0 +1,7 @@
+services:
+  server-app:
+    extends:
+      file: docker-compose.components.yaml
+      service: server-app
+    ports:
+      - "${SERVER_APP_PORT}:80"
