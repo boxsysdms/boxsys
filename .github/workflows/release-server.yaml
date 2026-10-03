@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - preview
+    paths:
+      - "apps/server/**"
+      - ".github/actions/setup-php/action.yaml"
+      - ".github/workflows/ci-server.yaml"
     tags:
       - '*'
   workflow_dispatch:
@@ -44,7 +48,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: ./apps/server
+          context: .
           file: ./apps/server/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
