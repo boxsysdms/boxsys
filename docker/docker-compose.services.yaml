@@ -1,0 +1,55 @@
+### Docker Compose Services Template ###
+
+# This file defines reusable service templates for infrastructure components:
+# - server-db: PostgreSQL database for server
+# - server-cache: Redis cache with authentication for server
+#
+# These templates are used as base definitions that can be extended by other
+# compose files (docker-compose.yaml, docker-compose.dev.yaml, etc.) to add
+# specific configurations like ports, volumes, or environment variables.
+#
+# All services are configured with:
+# - Health checks for startup dependencies
+# - Data persistence via named volumes
+# - Networking through the shared 'boxsys-network'
+# - Auto-restart on failure
+
+services:
+  server-db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${SERVER_DB_NAME}
+      POSTGRES_USER: ${SERVER_DB_USER}
+      POSTGRES_PASSWORD: ${SERVER_DB_PASSWORD}
+    restart: always
+    volumes:
+      - server-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SERVER_DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - boxsys-network
+
+  server-cache:
+    image: redis:8-alpine
+    command: ["redis-server", "--requirepass", "${SERVER_CACHE_PASSWORD}"]
+    restart: always
+    volumes:
+      - server-cache-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${SERVER_CACHE_PASSWORD} ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - boxsys-network
+
+volumes:
+  server-db-data:
+  server-cache-data:
+
+networks:
+  boxsys-network:
+    driver: bridge
