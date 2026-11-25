@@ -1,0 +1,49 @@
+name: BoxSys Server CI Workflow
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/ci-server.yaml"
+      - ".github/actions/setup-php/action.yaml"
+      - "apps/server/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/ci-server.yaml"
+      - ".github/actions/setup-php/action.yaml"
+      - "apps/server/**"
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: apps/server
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Copy .env.testing
+        run: test -f .env.testing || cp .env.example .env.testing
+
+      - name: Setup PHP
+        uses: ./.github/actions/setup-php
+        with:
+          workdir: apps/server
+          coverage: xdebug
+
+      - name: Generate Application Key
+        run: php artisan key:generate --env=testing
+
+      - name: Run Unit and Feature Tests
+        run: composer test:unit
+
+      - name: Run Static Analysis
+        run: composer test:types
+
+      - name: Run Code Style Checks
+        run: composer test:lint
+  
