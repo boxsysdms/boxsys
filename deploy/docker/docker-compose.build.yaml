@@ -1,0 +1,9 @@
+services:
+  server-app:
+    extends:
+      file: docker-compose.application.yaml
+      service: server-template
+    ports:
+      - "${SERVER_APP_PORT:-8000}:80"
+    volumes:
+      - server-app-storage:/var/www/html/storage

@@ -1,0 +1,34 @@
+services:
+  server-template:
+    build:
+      context: ../..
+      dockerfile: apps/server/Dockerfile
+      target: production
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      APP_ENV: ${SERVER_APP_ENV:-production}
+      APP_KEY: ${SERVER_APP_KEY:?Set SERVER_APP_KEY in deploy/docker/.env}
+      APP_DEBUG: ${SERVER_APP_DEBUG:-false}
+      APP_URL: ${SERVER_APP_URL:-http://localhost:8000}
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: ${SERVER_LOG_LEVEL:-info}
+      DB_CONNECTION: pgsql
+      DB_HOST: server-db
+      DB_PORT: 5432
+      DB_DATABASE: ${SERVER_DB_NAME}
+      DB_USERNAME: ${SERVER_DB_USER}
+      DB_PASSWORD: ${SERVER_DB_PASSWORD:?Set SERVER_DB_PASSWORD}
+      CACHE_STORE: redis
+      REDIS_HOST: server-cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${SERVER_CACHE_PASSWORD:?Set SERVER_CACHE_PASSWORD}
+      SESSION_DRIVER: redis
+    depends_on:
+      server-db:
+        condition: service_healthy
+      server-cache:
+        condition: service_healthy
+    networks:
+      - boxsys-network
