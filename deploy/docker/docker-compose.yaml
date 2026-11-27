@@ -5,8 +5,6 @@ services:
     extends:
       file: docker-compose.infrastructure.yaml
       service: postgres-template
-    ports:
-      - "${SERVER_DB_PORT:-5432}:5432"
     environment:
       POSTGRES_DB: ${SERVER_DB_NAME}
       POSTGRES_USER: ${SERVER_DB_USER}
@@ -19,8 +17,6 @@ services:
       file: docker-compose.infrastructure.yaml
       service: redis-template
     command: ["redis-server", "--requirepass", "${SERVER_CACHE_PASSWORD:?Set SERVER_CACHE_PASSWORD}", "--appendonly", "yes"]
-    ports:
-      - "${SERVER_CACHE_PORT:-6379}:6379"
     environment:
       REDIS_PASSWORD: ${SERVER_CACHE_PASSWORD}
     volumes:
@@ -32,6 +28,9 @@ volumes:
   server-app-storage:
   server-app-vendor:
   server-app-bootstrap-cache:
+  portal-node-modules:
+  portal-app-node-modules:
+  portal-next:
 
 networks:
   boxsys-network:

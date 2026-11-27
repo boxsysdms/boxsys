@@ -22,3 +22,27 @@ services:
       start_period: 10s
     networks:
       - boxsys-network
+
+  gateway-template:
+    image: ${NGINX_IMAGE:-nginx:alpine}
+    restart: unless-stopped
+    ports:
+      - "${GATEWAY_HTTP_PORT:-80}:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      server:
+        condition: service_healthy
+      portal:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/_health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      boxsys-network:
+        aliases:
+          - boxsys.local
+          - api.boxsys.local

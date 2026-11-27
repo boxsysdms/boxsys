@@ -10,10 +10,27 @@ services:
       APP_DEBUG: "true"
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: "1"
       LARAVEL_OPTIMIZE: "0"
-    ports:
-      - "${SERVER_APP_PORT:-8000}:80"
     volumes:
       - ../../apps/server:/var/www/html
       - server-app-vendor:/var/www/html/vendor
       - server-app-storage:/var/www/html/storage
       - server-app-bootstrap-cache:/var/www/html/bootstrap/cache
+
+  portal:
+    extends:
+      file: docker-compose.application.yaml
+      service: portal-template
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ../../apps/portal:/app/apps/portal
+      - portal-node-modules:/app/node_modules
+      - portal-app-node-modules:/app/apps/portal/node_modules
+      - portal-next:/app/apps/portal/.next
+
+  gateway:
+    extends:
+      file: docker-compose.infrastructure.yaml
+      service: gateway-template
