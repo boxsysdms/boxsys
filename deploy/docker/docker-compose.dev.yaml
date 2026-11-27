@@ -1,0 +1,19 @@
+services:
+  server:
+    extends:
+      file: docker-compose.application.yaml
+      service: server-template
+    build:
+      target: development
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: "1"
+      LARAVEL_OPTIMIZE: "0"
+    ports:
+      - "${SERVER_APP_PORT:-8000}:80"
+    volumes:
+      - ../../apps/server:/var/www/html
+      - server-app-vendor:/var/www/html/vendor
+      - server-app-storage:/var/www/html/storage
+      - server-app-bootstrap-cache:/var/www/html/bootstrap/cache

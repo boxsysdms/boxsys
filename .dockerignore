@@ -1,0 +1,17 @@
+# Shared exclusions for every component in the monorepo.
+**/.git
+**/node_modules
+**/vendor
+**/.env*
+**/.turbo
+**/.phpunit*
+**/.DS_Store
+**/.idea
+**/.vscode
+**/.codex
+**/.cursor
+**/.zed
+**/auth.json
+
+# Component-specific rules belong beside its Dockerfile:
+# apps/<component>/Dockerfile.dockerignore
