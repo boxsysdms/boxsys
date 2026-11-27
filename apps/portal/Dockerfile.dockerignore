@@ -1,0 +1,30 @@
+# Portal build context. These rules override the root .dockerignore.
+**
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!turbo.json
+!apps/
+!apps/*/package.json
+!apps/portal/
+!apps/portal/**
+!packages/
+!packages/**
+
+# Never copy host dependencies, secrets or generated build output.
+**/node_modules
+**/vendor
+**/.git
+**/.next
+**/.turbo
+**/dist
+**/coverage
+**/*.tsbuildinfo
+**/.env*
+**/.npmrc
+**/auth.json
+**/.idea
+**/.vscode
+**/.DS_Store
+**/Dockerfile*
+apps/portal/pnpm-lock.yaml

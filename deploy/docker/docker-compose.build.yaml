@@ -3,7 +3,15 @@ services:
     extends:
       file: docker-compose.application.yaml
       service: server-template
-    ports:
-      - "${SERVER_APP_PORT:-8000}:80"
     volumes:
       - server-app-storage:/var/www/html/storage
+
+  portal:
+    extends:
+      file: docker-compose.application.yaml
+      service: portal-template
+
+  gateway:
+    extends:
+      file: docker-compose.infrastructure.yaml
+      service: gateway-template

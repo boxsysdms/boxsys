@@ -11,7 +11,7 @@ services:
       APP_ENV: ${SERVER_APP_ENV:-production}
       APP_KEY: ${SERVER_APP_KEY:?Set SERVER_APP_KEY in deploy/docker/.env}
       APP_DEBUG: ${SERVER_APP_DEBUG:-false}
-      APP_URL: ${SERVER_APP_URL:-http://localhost:8000}
+      APP_URL: ${SERVER_APP_URL:-http://api.boxsys.local}
       LOG_CHANNEL: stderr
       LOG_LEVEL: ${SERVER_LOG_LEVEL:-info}
       DB_CONNECTION: pgsql
@@ -30,5 +30,26 @@ services:
         condition: service_healthy
       server-cache:
         condition: service_healthy
+    networks:
+      - boxsys-network
+
+  portal-template:
+    build:
+      context: ../..
+      dockerfile: apps/portal/Dockerfile
+      target: production
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     networks:
       - boxsys-network

@@ -1,22 +1,23 @@
 # Docker
 
 Docker configuration for the monorepo. Each component has its own Dockerfile in
-`apps/<component>/Dockerfile` and its services in `deploy/docker`.
-Currently, only the `server` component is configured.
+`apps/<component>/Dockerfile`. The stack currently includes the portal, API,
+PostgreSQL, Redis and an Nginx gateway.
 
 ## Layout
 
 | File | Purpose |
 | --- | --- |
-| `docker-compose.yaml` | Infrastructure, volumes and network |
-| `docker-compose.infrastructure.yaml` | PostgreSQL and Redis templates |
-| `docker-compose.application.yaml` | Component templates; currently, `server-template` |
-| `docker-compose.dev.yaml` | Local services with source code mounted from the host |
-| `docker-compose.build.yaml` | Services with source code included in their images |
-| `server/` | Nginx, PHP-FPM and server startup configuration |
+| `docker-compose.yaml` | Database, cache, volumes and network |
+| `docker-compose.infrastructure.yaml` | PostgreSQL, Redis and gateway templates |
+| `docker-compose.application.yaml` | Server and portal templates |
+| `docker-compose.dev.yaml` | Development targets with local application source |
+| `docker-compose.build.yaml` | Production targets with source included in the images |
+| `gateway/nginx.conf` | HTTP routing to the portal and API |
+| `server/` | API Nginx, PHP-FPM and startup configuration |
 
-Services reuse templates through `extends`. Templates are not started on their
-own. Their required volumes, networks and services must be declared in the stack.
+Services reuse templates through `extends`. Templates do not start on their
+own. Their required services, networks and volumes must be declared in the stack.
 
 ## Configuration
 
@@ -31,27 +32,30 @@ Set the Laravel application key and passwords before starting. Keep the same
 
 | Variable | Purpose | Default value |
 | --- | --- | --- |
+| `GATEWAY_HTTP_PORT` | The only published host port | `80` |
 | `SERVER_APP_ENV` | Laravel environment | `production`; `local` in dev |
 | `SERVER_APP_KEY` | Laravel encryption key | Required |
 | `SERVER_APP_DEBUG` | Detailed errors | `false`; `true` in dev |
-| `SERVER_APP_URL` | Full application URL | `http://localhost:8000` |
-| `SERVER_APP_BIND_ADDRESS` | HTTP interface on the host | `127.0.0.1` |
-| `SERVER_APP_PORT` | HTTP port on the host | `8000` |
+| `SERVER_APP_URL` | Public API URL | `http://api.boxsys.local` |
 | `SERVER_LOG_LEVEL` | Laravel log level | `info` |
 | `SERVER_DB_NAME` | Database name | `boxsys` |
-| `SERVER_DB_BIND_ADDRESS` | PostgreSQL interface on the host | `127.0.0.1` |
-| `SERVER_DB_PORT` | PostgreSQL port on the host | `5432` |
 | `SERVER_DB_USER` | PostgreSQL user | `boxsys` |
 | `SERVER_DB_PASSWORD` | PostgreSQL password | Required |
-| `SERVER_CACHE_BIND_ADDRESS` | Redis interface on the host | `127.0.0.1` |
-| `SERVER_CACHE_PORT` | Redis port on the host | `6379` |
 | `SERVER_CACHE_PASSWORD` | Redis password | Required |
 | `POSTGRES_IMAGE` | PostgreSQL image | `postgres:18-alpine` |
 | `REDIS_IMAGE` | Redis image | `redis:8-alpine` |
+| `NGINX_IMAGE` | Gateway image | `nginx:alpine` |
 
-The ports above are host ports. Between containers, the server uses
-`server-db:5432` and `server-cache:6379`. To expose HTTP on another
-interface, adjust `SERVER_APP_BIND_ADDRESS`.
+Add these entries to the hosts file on the machine running your browser:
+
+```text
+127.0.0.1 boxsys.local
+127.0.0.1 api.boxsys.local
+```
+
+On Windows, the file is `C:\Windows\System32\drivers\etc\hosts`.
+On Linux/macOS, it is `/etc/hosts`. For a remote Docker host, use that host's
+IP address instead of `127.0.0.1`.
 
 ## Usage
 
@@ -59,45 +63,51 @@ Run from the monorepo root with Docker Compose and pnpm available:
 
 | Command | Purpose |
 | --- | --- |
-| `pnpm docker:up` | Start infrastructure only |
-| `pnpm docker:dev` | Build and start the local environment |
-| `pnpm docker:build` | Build and start the production environment |
-| `pnpm docker:down` | Stop and remove containers while keeping their data |
+| `pnpm docker:up` | Start the database and cache only |
+| `pnpm docker:dev` | Build and start the local stack |
+| `pnpm docker:build` | Build and start the production stack |
+| `pnpm docker:down` | Stop and remove containers while keeping volumes |
 
-The `http://localhost:8000/up` endpoint checks that the server has started.
-Use one scenario per machine: dev locally, build in production.
-Migrations run separately during deployment.
+| URL | Destination |
+| --- | --- |
+| `http://boxsys.local` | Portal |
+| `http://api.boxsys.local` | Server API |
 
-## Server image and volumes
+All external HTTP traffic enters through Nginx. The portal, API, database and
+cache have no published host ports. The gateway forwards the requested host,
+client address and protocol, and supports Next.js development WebSockets.
+Only the two configured hostnames are routed. Both hostnames also resolve to
+the gateway inside Docker, including API requests made by the portal server.
 
-The Dockerfile provides `development` and `production` targets. Production
-includes only production Composer dependencies; dev also includes Composer and
-development tools. Local source code is mounted only in dev.
+Use one scenario per machine: dev locally, build in production. If you change
+`GATEWAY_HTTP_PORT`, include that port in both URLs and `SERVER_APP_URL`.
+The gateway serves HTTP; TLS is not configured. Run migrations separately
+during deployment.
 
-Volume names are the same in both environments. PostgreSQL, Redis and
-`server-app-storage` retain data when containers are recreated. In dev,
-`vendor` and `bootstrap/cache` also use volumes to avoid host dependencies
-and caches. After changing `composer.lock` in dev, run `composer install`
-inside the container to update the dependency volume.
+## Images and volumes
 
-The local `vendor` directory is excluded from the build to prevent development
-packages from being copied back into the image. Logs are available through
-container logs.
+Both application Dockerfiles provide `development` and `production` targets.
+The portal uses its standalone Next.js image in production. The dev scenario
+mounts local application source and keeps dependencies and caches in volumes.
+
+Volume names do not change between environments. PostgreSQL, Redis and
+`server-app-storage` retain data when containers are recreated. After changing
+a lockfile in dev, run `composer install` in `server` or `pnpm install` in
+`portal` to update its dependencies. Rebuild the portal image after changing
+shared packages in `packages/`.
+
+Logs are available through container logs. Stopping the stack keeps its volumes.
 
 ## Adding components
 
 1. Create `apps/<component>/Dockerfile`.
-2. Add its template to `docker-compose.application.yaml`, specifying the
-   Dockerfile path and that component's settings.
-3. Add the service to the dev and build scenarios, using `extends` to reference
-   its template.
-4. Declare the required volumes, network and dependencies in the stack. Add
-   the component's variables to `.env.example`.
+2. Add its template to `docker-compose.application.yaml`.
+3. Extend the template in the dev and build scenarios.
+4. Declare its volumes, network and dependencies.
+5. Add its hostname and upstream to `gateway/nginx.conf`, and include the service
+   in the gateway's `depends_on` list.
 
-The root `.dockerignore` contains only shared exclusions. Component-specific
-rules belong in `apps/<component>/Dockerfile.dockerignore`, which takes
-precedence over the root file. The server already uses this mechanism to limit
-its build context without restricting future components.
+The root `.dockerignore` contains shared exclusions. Component-specific rules
+belong in `apps/<component>/Dockerfile.dockerignore`.
 
-Compose paths are relative to the first file in the stack,
-`deploy/docker/docker-compose.yaml`. Keep templates in `deploy/docker`.
+Compose paths are relative to `deploy/docker/docker-compose.yaml`.
