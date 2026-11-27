@@ -1,7 +1,10 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "standalone",
+  allowedDevOrigins: ["boxsys.local"],
+  outputFileTracingRoot: path.resolve(__dirname, "../.."),
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,
