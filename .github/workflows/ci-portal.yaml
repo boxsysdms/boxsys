@@ -5,6 +5,10 @@ on:
     branches: ["main"]
     paths:
       - ".github/workflows/ci-portal.yaml"
+      - ".tool-versions"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - "apps/portal/**"
       - "packages/eslint-config/**"
       - "packages/typescript-config/**"
@@ -12,6 +16,10 @@ on:
     branches: ["main"]
     paths:
       - ".github/workflows/ci-portal.yaml"
+      - ".tool-versions"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - "apps/portal/**"
       - "packages/eslint-config/**"
       - "packages/typescript-config/**"
