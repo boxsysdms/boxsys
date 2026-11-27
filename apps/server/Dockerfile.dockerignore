@@ -1,0 +1,35 @@
+# Server-only context. This file overrides the shared root .dockerignore.
+**
+!apps/
+!apps/server/
+!apps/server/**
+!deploy/
+!deploy/docker/
+!deploy/docker/server/
+!deploy/docker/server/**
+
+# Never replace locked dependencies with the host installation.
+apps/server/vendor
+apps/server/node_modules
+apps/server/.env*
+apps/server/auth.json
+apps/server/.git*
+apps/server/.phpunit*
+apps/server/.codex
+apps/server/.cursor
+apps/server/.idea
+apps/server/.vscode
+apps/server/.zed
+apps/server/*.md
+apps/server/Dockerfile*
+apps/server/tests
+apps/server/phpunit.xml*
+apps/server/phpstan.neon*
+apps/server/pint.json
+apps/server/public/hot
+apps/server/public/storage
+apps/server/database/*.sqlite*
+apps/server/bootstrap/cache/*.php
+apps/server/storage/**
+!apps/server/storage/**/
+!apps/server/storage/**/.gitignore
